@@ -10,35 +10,39 @@
 from util.db_util import DBUtil
 from model.user import User
 from util.sql import sql_dict
-
-db_util = DBUtil()
-
-
+db_util=DBUtil()
 class UserDao:
     def __init__(self):
         pass
+    def get_user(self,user_msg):
+        tmp = user_msg[1].split(' ')
+        name = tmp[1]
+        passwd = tmp[2]
+        sql = 'select * from user_msg[0] where name="%s" and passwd="%s"' % (name, passwd)
+        r=db_util.do_query(sql)
+        if r:
+            return True
+        else:
+            return False
+    def reg(self,user):
+        L = user.split(' ')
+        name = L[1]
+        passwd = L[2]
+        sql = "select * from user where name='%s'" % name
+        r =db_util.do_query(sql)
+        if r != None:
+            return False
+        else:
+            sql = "insert into user (name,passwd) values ('%s','%s')" % (name, passwd)
+            db_util.do_update(sql)
+            return True
 
-    def get_user(self, user_msg: dict):
-        """
-        根据指定信息查询是否存在该用户
-        :param user_msg: 字典形式，{"数据库列名":"值"}
-        :return: 查询结果不为空返回True，查询失败返回False
-        """
-        pass
-
-    def reg(self, user: User):
-        """
-        用户注册
-        :param user: 用户信息
-        :return: 注册成功返回True,注册失败返回False
-        """
-        pass
-
-    def log(self, user_name, user_passwd) -> User:
-        """
-        用户登录
-        :param user_name: 用户名
-        :param user_passwd: 密码
-        :return: 返回查询到的用户信息
-        """
-        pass
+    def log(self,user_name,user_passwd):
+        name = user_name
+        passwd = user_passwd
+        sql = 'select * from user where name="%s" and passwd="%s"' % (name, passwd)
+        r = db_util.do_query(sql)
+        if r:
+            return user_name,user_passwd
+        else:
+            return self.log()
